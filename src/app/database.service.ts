@@ -41,6 +41,10 @@ export class DatabaseService {
     let url = "/movies/"+mvId+"/actors";
     return this.http.post(url,actor, httpOptions);
   }
+  addMovieToActor(actorId,movie){
+    let url = "/actors/"+actorId+"/movies";
+    return this.http.post(url,movie, httpOptions);
+  }
   createMovie(data){
     return this.http.post("/movies", data, httpOptions);
   }

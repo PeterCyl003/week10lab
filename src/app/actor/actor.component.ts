@@ -7,6 +7,7 @@ import { DatabaseService } from "../database.service";
 })
 export class ActorComponent implements OnInit {
   actorsDB: any[] = [];
+  tempActorsDB: any[] = [];//used for saving actors in extra task
   moviesDB: any[] = [];
   section = 1;
   fullName: string = "";
@@ -22,7 +23,16 @@ export class ActorComponent implements OnInit {
   onGetActors() {
     this.dbService.getActors().subscribe((data: any[]) => {
       this.actorsDB = data;
+      this.onGetActorsWhoActInAtLeast2Movies();
     });
+  }
+  onGetActorsWhoActInAtLeast2Movies() {
+    this.tempActorsDB=[]
+    for (let i=0;i<this.actorsDB.length;i++){
+      if(this.actorsDB[i].movies.length>=2){
+        this.tempActorsDB.push(this.actorsDB[i])
+      }
+    }
   }
   onGetMovies() {
     this.dbService.getMovies().subscribe((data: any[]) => {
@@ -79,6 +89,9 @@ export class ActorComponent implements OnInit {
       this.dbService.addActorToMovie(this.movieSelected._id,{id:this.actorSelected._id}).subscribe(result => {
         this.onGetMovies();
       });
+      this.dbService.addMovieToActor(this.actorSelected._id,{id:this.movieSelected._id}).subscribe(result => {
+        this.onGetActors();
+      });
     }else{
       alert("please select actor and movie")
     }
@@ -87,6 +100,7 @@ export class ActorComponent implements OnInit {
   ngOnInit() {
     this.onGetActors();
     this.onGetMovies();
+    // this.onGetActorsWhoActInAtLeast2Movies();
   }
   changeSection(sectionId) {
     this.section = sectionId;
